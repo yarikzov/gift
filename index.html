@@ -7,14 +7,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #2c0e37;
+            --bg-top: #2c0e37;
+            --bg-mid-1: #682a66;
+            --bg-mid-2: #c6426e;
+            --bg-sun: #ff9a9e;
+            --bg-water: #3a1c52;
             --window-bg: #e0cffc;
+            --window-border: #4b2d75;
             --text-color: #2c0e37;
-            --accent: #ff6b6b;
+            --accent: #ff5e78;
         }
 
         body {
-            background: linear-gradient(135deg, #2c0e37, #682a66, #ff9a9e);
+            /* Сложный градиент для имитации заката из видео */
+            background: linear-gradient(
+                to bottom,
+                var(--bg-top) 0%,
+                var(--bg-mid-1) 30%,
+                var(--bg-mid-2) 50%,
+                var(--bg-sun) 65%,
+                var(--bg-mid-2) 70%,
+                var(--bg-water) 100%
+            );
             font-family: 'Press Start 2P', cursive;
             margin: 0;
             height: 100vh;
@@ -23,193 +37,292 @@
             align-items: center;
             color: var(--text-color);
             overflow: hidden;
+            image-rendering: pixelated;
         }
 
-        /* Общие стили для окон */
+        /* Эффект пиксельной сетки поверх фона */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 4px 4px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Общие стили для окон в стиле ретро-ОС */
         .window {
             background: var(--window-bg);
-            border: 4px solid #fff;
-            box-shadow: 8px 8px 0px rgba(0,0,0,0.3);
+            border: 4px solid var(--window-border);
+            /* Пиксельная тень */
+            box-shadow: 
+                4px 4px 0px rgba(0,0,0,0.4),
+                inset -2px -2px 0px rgba(0,0,0,0.3),
+                inset 2px 2px 0px rgba(255,255,255,0.7);
             width: 90%;
-            max-width: 600px;
-            padding: 2px;
-            display: none; /* Скрыто по умолчанию */
+            max-width: 550px;
+            display: none;
             position: absolute;
             animation: popIn 0.3s ease-out;
         }
 
         .window-header {
-            background: linear-gradient(90deg, #ff9a9e, #ff6b6b);
-            padding: 10px;
+            background: linear-gradient(90deg, var(--bg-mid-2), var(--accent));
+            padding: 8px 12px;
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 4px solid #fff;
+            border-bottom: 4px solid var(--window-border);
+            font-size: 12px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
         }
 
         .window-content {
-            padding: 20px;
+            padding: 25px;
             text-align: center;
         }
 
         /* Экран логина */
-        #login-screen {
-            display: block; /* Показываем первым */
-            z-index: 100;
-        }
+        #login-screen { display: block; z-index: 100; }
 
         input {
             display: block;
-            width: 80%;
-            margin: 10px auto;
-            padding: 10px;
+            width: 85%;
+            margin: 15px auto;
+            padding: 12px;
             font-family: 'Press Start 2P', cursive;
-            border: 2px solid #2c0e37;
-            background: #fff0f5;
+            border: 3px solid var(--window-border);
+            background: #fff;
+            font-size: 12px;
+            box-shadow: inset 3px 3px 0px rgba(0,0,0,0.2);
+            outline: none;
         }
 
         button {
             background: var(--accent);
             color: white;
-            border: none;
-            padding: 15px 20px;
+            border: 3px solid var(--window-border);
+            padding: 15px 25px;
             font-family: 'Press Start 2P', cursive;
             cursor: pointer;
-            box-shadow: 4px 4px 0px #2c0e37;
-            transition: transform 0.1s;
-            margin-top: 10px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.4);
+            margin-top: 15px;
+            font-size: 12px;
+            position: relative;
         }
 
         button:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #2c0e37;
+            top: 3px;
+            left: 3px;
+            box-shadow: 1px 1px 0px rgba(0,0,0,0.4);
         }
 
         /* Главное меню (папки) */
         .folder-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 30px;
+            margin-top: 30px;
+            padding: 0 20px;
         }
 
         .folder {
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .folder p {
+            margin-top: 10px;
+            font-size: 10px;
+            background: rgba(255,255,255,0.7);
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        /* ВСТРОЕННЫЕ ПИКСЕЛЬНЫЕ ИКОНКИ (Base64) */
+        .pixel-icon {
+            width: 48px;
+            height: 48px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            image-rendering: pixelated;
             transition: transform 0.2s;
         }
+        .folder:hover .pixel-icon { transform: scale(1.1); }
 
-        .folder:hover {
-            transform: scale(1.05);
-        }
+        /* Иконка папки с фото */
+        .icon-photos { background-image: url('data:image/png;base64,iVBORw0KSearch GgoAAAANSUhEUgAAADAA… on blockchair.coSearch mGgoAAAANSUhEUgAAADA… 
+on blockchair.commGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHMSURBVGhD7ZntUQIxEEW/3QJKgBJQAkqAEqAEKAGUAiXACrACtAArQAuwAnfOjJ53jXlI8n5I2Xn8E7LZHbL7kk2SBE5kZzL/n8C4/O2lqF9F7T7GZp/7+sD9aR+9h3X0bta7vY+5mI9sLw4/T5+14zS31eN63QYq9+q9g6Y5Y1L36kU9u43X8b7/G8mDqL0W89D27sXv1W7t3zU3kXwWdfA5Xrf7R/1uR1+v7fG97yM5iPqY26392P8Yybmog9f9tPdvzU0kR1F7L+ah7Vf06xN5EHXg7N7WfG74bSR1N56Y/J9A7j3sRHLsYSeSYw87kRx72InkkfNwj/2488+d7+U8vN1/G0ndjSeSg6hX69uax/1vIzkXdXBuF/t3zU0kj6LeW8xt7d+u7/s+kpOog7N7aGv+2H8byVnUW4u53R9q/665ieRe1IHrfm7330ZybSearch 7cTybGHnUiOPexEcuxhJ… 
+on blockchair.com7cTybGHnUiOPexEcuxhJ5JjDzuRHHvYieSY9/A23k7k2MNI6m48kRxE7W3H+3E7kXwUtdfi9hD3v43k2MNOJOeizv0x9+3H7UTyUdTei3lvW/O54fcx53u5i6TuxhPJTtS5535u97+NpG54F74L34V74d/5S365C+f99X4A4uJ17e1zO78AAAAASUVORK5CYII='); }
+        /* Иконка музыки */
+        .icon-music { background-image: url('data:image/png;base64,iVBORw0KSearch GgoAAAANSUhEUgAAADAA… on blockchair.coSearch mGgoAAAANSUhEUgAAADA… 
+on blockchair.coSearch mmGgoAAAANSUhEUgAAAD… 
+on blockchair.commmGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJCSURBVGhD7ZlhTsMwEIVf9QZcAG7ACThBbrF4g14A3IBLwA3CCeAE9AS9ACegFwAXAM4AN4j71fJ2W4u1Y0d7M0r5J0X1xP55b/8zS74QyH0w/5+Ap6d4/76X++46X2d//X490/4t2n/b32/P8k0FkIAt2s9ov6D9g/Yn2jW0O8j0h3v5qgJo4BrtKdrPaG/Q/kZ7hXYFmX6bS77JA2jgE9p/aM9oL2jXkNk+f6j9W+w7P5UAGriifY92DZnuaL/a+7eQfBMBkIAd2ne0T5DpJr3+LSRfXwASeEP7hnYJme7T7d9C8lUFMIFX2le0C8j0M83+LSQ/RQAT+Gzv71Pj20h+qgAmcIr22N73qfJtJD9VABM4RPuxve9T5dtIfqoAJpBo/xb2fZ8q30ZynwB+7V8lJ9H7YAI5e+8/432QfB9MIGfvvU+NbyP5PphAzt771Pg2ku+DCRS8932qfBvJfQL4s//6y9g/R9+qSearch fBvJfQJI5Bvtc7TPqfJt… 
+on blockchair.coSearch mfBvJfQJI5Bvtc7TPqfJ… 
+on blockchair.coSearch mmfBvJfQJI5Bvtc7TPqf… 
+on blockchair.commmfBvJfQJI5Bvtc7TPqfJtJD9VABM4RbuFfU8N30byUwUwgR3aJ2jX1PDtJ/x8AQEkgU9oP6GdU8O3n/DzRQQwgR3aJ2ifU8O33/DzFQUwgRPa57W/P2n6NpKvKoAJ5NC+r/39Sdt/I7mvAD28RbuA9i1lvk3K9xXQ4e0j2jVk+rX3f6N8n3u+s8093477T9r8m5Tv8xIu20u4u+1DuvxblO/znj669/S5h4+p829Rvg8g3F8A4Vz38Dn5NynfhxBeXgih0E2j98F8H0L4+EIIH91H7N/f5S98wU/66+sN4s22L77fE6QAAAAASUVORK5CYII='); }
+        /* Иконка письма */
+        .icon-letter { background-image: url('data:image/png;base64,iVBORw0KSearch GgoAAAANSUhEUgAAADAA… on blockchair.coSearch mGgoAAAANSUhEUgAAADA… 
+on blockchair.coSearch mmGgoAAAANSUhEUgAAAD… 
+on blockchair.coSearch mmmGgoAAAANSUhEUgAAA… 
+on blockchair.commmmGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAG8SURBVGhD7ZhtTsMwEIVd9Qa9ACegJ+AE9AS5ANyAcAIuEDeIE9ATxAnCBXD+mKj7VcrGdmIndmI1/ElRpfbLeH4zjm2nQoUK/0/g8jJ+eL1+fL68PB7p+f1+POy/x/3X/f24p+erK23j4yP6hW6/Pj5O9FwNYH+3/0b3j55b6LkuAN1+4fno+cTz0XOjANyY9/S89Xz03CgAN36i573no+dGAbjxFz0fPR89NwrAjb/R89Hz0XOjANw4p+ej56PnRgG4cUHPR89Hz40C2Lq/P24+P090+5WeP+j55F3429vx8eNjoue/ALZg65mej547BeDGj/T8uPf8bB1+dK6b2qYtYCs9T/R88k0E2oatd57v9PxU4y3gXnp+ovEmAm25t3f03CnA1r19ovE2404BttJ4O9F4u3GnAFtpvJ1ovN24UwA3TjTeXjTeSearch LmzGjQK4caLxdqLxdqLx… 
+on blockchair.coSearch mLmzGjQK4caLxdqLxdqL… 
+on blockchair.coSearch mmLmzGjQK4caLxdqLxdq… 
+on blockchair.commmLmzGjQK4caLxdqLxdqLxdmI33imArTTebjTeLjTeTuzGjQK4caLxdqLxdqLxdmI33imAm15ovF1ovF3YjR8C2Eqj24n27Ubj7cJufKcAN72483y3X9tO4/0C3PTizee7/do2Gu8U4KYXVz7f7de20XinADc97z4/en7q8Q8c7qJ6PqU92QAAAABJRU5ErkJggg=='); }
+        /* Иконка валентинки */
+        .icon-heart { background-image: url('data:image/png;base64,iVBORw0KSearch GgoAAAANSUhEUgAAADAA… on blockchair.coSearch mGgoAAAANSUhEUgAAADA… 
+on blockchair.coSearch mmGgoAAAANSUhEUgAAAD… 
+on blockchair.coSearch mmmGgoAAAANSUhEUgAAA… 
+on blockchair.commmmGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJKSURBVGhD7ZhbTsMwEEVz6g24ACwAC8ACsAAsACcgJ4ATgAVgATgB4QRwAnABcAb7P2pU1Y6TmLGTOPxIUZXG8dyRe+zYgR49evz/BC4v/c3r635zdaXt9Xq52f+N+6/7++2Wtl9d+Tc+P33g/cfHx5a2SwH2d/svuH/c/5G2cwG4/cT94/6PtK0KQJvP3D/u30h7kQBu/ML94/6NtBcJoNkv3D/u30j7IgF0+xP3j/s30l4kADf+xv3j/o20FwnAjXO4f9y/kfYiAbhxQfeP+zfSXiyAnfv73fbz04bbj9x/4P7kXfjdXX97fLRw/xfAFrYeuX/c3y2AGz9x/9x7f9YOXznXntKmLaBl7i/c/+T1BNqGrR/c33L/p8abgFvuP3P/k9cTaMttv3B/uwBb2PrH/Z8a7zTAlvuf3P/UeKcBtpzG+4/7PzXeZYAbR+6fe+9/aryTAFtu4/3F/RtpLxLADa9x/+be+7N2+CgBNrzH/XNv/6c+v0kA3Ljj/nF/t/1dArjhA+7f3Hv/Rtr3CrDhM+7f3Hv/Rtr3CqDjA+7f3Hv/0x5fJcCGj7h/3N8tAB1fcP/Search m3vuf9vhJAmz4jPs3996… 
+on blockchair.coSearch mm3vuf9vhJAmz4jPs399… 
+on blockchair.coSearch mmm3vuf9vhJAmz4jPs39… 
+on blockchair.commmm3vuf9vhJAmz4jPs3996ftcNPFmDDV9y/ubd/6vFbBKDjE+4f93cLwA3n7h/3b6R9swA9XuH+zb33P+3xSwV0eI37x/3dAtDxBvdv7r3/aY9fJgA33HP/uH8jbQ8COrzH/Zt778/a4a0CunHk/s29/U97fLMA3HiA+zf39k893kOAPb3D/Zt7++e0x49/4HCp0c8f4XAAAAAASUVORK5CYII='); }
 
-        .folder-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-            display: block;
-        }
 
         /* Стили для контента внутри папок */
         .photo-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 15px;
+            padding: 10px;
+            background: #fff;
+            border: 3px inset var(--window-border);
         }
         
         .photo-frame {
-            background: white;
-            padding: 5px 5px 20px 5px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-            transform: rotate(-2deg);
+            background: #fff0f5;
+            padding: 8px 8px 25px 8px;
+            box-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+            transform: rotate(-3deg);
+            border: 2px solid #2c0e37;
+            transition: transform 0.2s;
+        }
+        
+        .photo-frame:hover {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 10;
         }
         
         .photo-frame:nth-child(even) {
-            transform: rotate(2deg);
+            transform: rotate(3deg);
+        }
+        
+        .photo-frame:nth-child(even):hover {
+             transform: rotate(0deg) scale(1.05);
         }
 
         .photo-frame img {
             width: 100%;
-            height: auto;
+            height: 120px; /* Фиксированная высота для аккуратности */
+            object-fit: cover; /* Чтобы фото не сплющивались */
             display: block;
+            border: 2px solid #2c0e37;
+            image-rendering: auto; /* Фотографии не должны быть пиксельными */
         }
 
         .letter-text {
             text-align: left;
-            line-height: 1.8;
+            line-height: 1.6;
             font-size: 10px;
-            max-height: 200px;
+            max-height: 250px;
             overflow-y: auto;
-            background: white;
-            padding: 10px;
-            border: 2px inset #fff;
+            background: #fff;
+            padding: 15px;
+            border: 3px inset var(--window-border);
+            white-space: pre-wrap; /* Сохраняет переносы строк */
         }
+        
+        /* Стилизация скроллбара в стиле ретро */
+        .letter-text::-webkit-scrollbar { width: 12px; }
+        .letter-text::-webkit-scrollbar-track { background: var(--window-bg); border: 2px solid var(--window-border); }
+        .letter-text::-webkit-scrollbar-thumb { background: var(--accent); border: 2px solid var(--window-border); }
 
         .back-btn {
-            background: #2c0e37;
+            background: var(--window-border);
             font-size: 10px;
             margin-top: 20px;
+            padding: 10px 15px;
         }
 
         /* Анимация появления */
         @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
         }
 
         .error-msg {
             color: red;
             font-size: 10px;
             display: none;
-            margin-top: 10px;
+            margin-top: 15px;
+            text-shadow: 1px 1px 0px black;
         }
 
         /* Финальный экран */
         .yes-btn {
-            font-size: 20px;
-            margin-top: 20px;
+            font-size: 16px;
+            margin-top: 30px;
+            background: #ff3355;
+            animation: pulse 1.5s infinite;
         }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
     </style>
 </head>
 <body>
 
     <div id="login-screen" class="window">
         <div class="window-header">
-            <span>🔒 Вход в сердце</span>
-            <span>X</span>
+            <span>🔒 SYSTEM LOGIN</span>
+            <span>_ X</span>
         </div>
         <div class="window-content">
-            <p>Добро пожаловать</p>
-            <br>
-            <input type="text" id="username" placeholder="Имя (Анастасия)">
-            <input type="password" id="password" placeholder="Пароль (дата)">
-            <button onclick="checkLogin()">Войти</button>
-            <p class="error-msg" id="error-msg">Неверное имя или дата!</p>
+            <p style="font-size: 14px;">Добро пожаловать</p>
+            <p style="font-size: 10px; margin-bottom: 20px;">Введите данные для доступа к сердцу</p>
+            
+            <input type="text" id="username" placeholder="Логин (Имя)">
+            <input type="password" id="password" placeholder="Пароль (ДД.ММ)">
+            <button onclick="checkLogin()">ВОЙТИ</button>
+            <p class="error-msg" id="error-msg">ОШИБКА ДОСТУПА!</p>
         </div>
     </div>
 
     <div id="main-menu" class="window">
         <div class="window-header">
-            <span>📂 Surprise_Files</span>
-            <span>X</span>
+            <span>📂 C:\Моя_Любовь</span>
+            <span>_ X</span>
         </div>
-        <div class="window-content">
-            <p>Выбери папку:</p>
+        <div class="window-content" style="padding-top: 10px;">
+            <p style="font-size: 12px;">Файлы для Анастасии:</p>
             <div class="folder-grid">
                 <div class="folder" onclick="openWindow('photos')">
-                    <span class="folder-icon">🖼️</span>
-                    <p>Наши фото</p>
+                    <div class="pixel-icon icon-photos"></div>
+                    <p>Фото.jpg</p>
                 </div>
                 <div class="folder" onclick="openWindow('music')">
-                    <span class="folder-icon">🎵</span>
-                    <p>Плейлист</p>
+                    <div class="pixel-icon icon-music"></div>
+                    <p>Музыка.mp3</p>
                 </div>
                 <div class="folder" onclick="openWindow('letter')">
-                    <span class="folder-icon">💌</span>
-                    <p>Письмо</p>
+                    <div class="pixel-icon icon-letter"></div>
+                    <p>Письмо.txt</p>
                 </div>
                 <div class="folder" onclick="openWindow('valentine')">
-                    <span class="folder-icon">💝</span>
-                    <p>Вопрос</p>
+                    <div class="pixel-icon icon-heart"></div>
+                    <p>ВАЖНО.exe</p>
                 </div>
             </div>
         </div>
@@ -217,136 +330,160 @@
 
     <div id="photos" class="window">
         <div class="window-header">
-            <span>📸 Memories.exe</span>
-            <span onclick="closeWindow('photos')" style="cursor:pointer">X</span>
+            <span>🖼️ Просмотр изображений</span>
+            <span onclick="closeWindow('photos')" style="cursor:pointer; padding: 0 5px;">X</span>
         </div>
         <div class="window-content">
             <div class="photo-grid">
-                <div class="photo-frame"><img src="https://via.placeholder.com/150/ff9a9e/ffffff?text=Love" alt="Foto"></div>
-                <div class="photo-frame"><img src="https://via.placeholder.com/150/ff6b6b/ffffff?text=You" alt="Foto"></div>
-                <div class="photo-frame"><img src="https://via.placeholder.com/150/e0cffc/000000?text=Us" alt="Foto"></div>
-                <div class="photo-frame"><img src="https://via.placeholder.com/150/682a66/ffffff?text=Date" alt="Foto"></div>
-            </div>
-            <button class="back-btn" onclick="closeWindow('photos')">Назад</button>
+                <div class="photo-frame">
+                    <img src="https://via.placeholder.com/200/ff9a9e/ffffff?text=FOTO+1" alt="Наше фото 1">
+                </div>
+                <div class="photo-frame">
+                    <img src="https://via.placeholder.com/200/ff6b6b/ffffff?text=FOTO+2" alt="Наше фото 2">
+                </div>
+                <div class="photo-frame">
+                    <img src="https://via.placeholder.com/200/e0cffc/000000?text=FOTO+3" alt="Наше фото 3">
+                </div>
+                <div class="photo-frame">
+                    <img src="https://via.placeholder.com/200/682a66/ffffff?text=FOTO+4" alt="Наше фото 4">
+                </div>
+                </div>
+            <button class="back-btn" onclick="closeWindow('photos')">< НАЗАД</button>
         </div>
     </div>
 
     <div id="music" class="window">
         <div class="window-header">
-            <span>🎵 Player</span>
-            <span onclick="closeWindow('music')" style="cursor:pointer">X</span>
+            <span>🎵 WinAmp Player</span>
+            <span onclick="closeWindow('music')" style="cursor:pointer; padding: 0 5px;">X</span>
         </div>
         <div class="window-content">
-            <div style="background: #000; color: #1db954; padding: 20px; border-radius: 10px; font-family: sans-serif;">
-                <h3>Наша песня</h3>
-                <p>Valentine's Mix</p>
+            <div style="background: #2c0e37; color: #00ff00; padding: 15px; border: 3px inset var(--window-border); font-family: 'Courier New', monospace; text-align: left;">
+                <p>*** NOW PLAYING ***</p>
+                <p>> Наша любимая песня.mp3</p>
+                <p>Bitrate: 320kbps</p>
                 <br>
-                <div style="height: 4px; background: grey; width: 100%; margin-bottom: 10px;"><div style="height:4px; width: 50%; background: #1db954;"></div></div>
-                <p>▶️ || ⏭️</p>
+                ) код ниже:
+                -->
+                <div style="height: 10px; background: #003300; width: 100%; margin: 10px 0; border: 1px solid #00ff00;">
+                     <div style="height:100%; width: 60%; background: #00ff00; animation: progress 10s linear infinite;"></div>
+                 </div>
             </div>
-            <p style="margin-top:10px; font-size: 10px;">(Представь, что здесь играет наша любимая музыка)</p>
-            <button class="back-btn" onclick="closeWindow('music')">Назад</button>
+            <button class="back-btn" onclick="closeWindow('music')">< НАЗАД</button>
         </div>
     </div>
 
     <div id="letter" class="window">
         <div class="window-header">
-            <span>📝 love_letter.txt</span>
-            <span onclick="closeWindow('letter')" style="cursor:pointer">X</span>
+            <span>📝 Блокнот: love.txt</span>
+            <span onclick="closeWindow('letter')" style="cursor:pointer; padding: 0 5px;">X</span>
         </div>
         <div class="window-content">
-            <div class="letter-text">
-                <p>Моя дорогая Настя,</p>
-                <p>С того дня, как мы начали встречаться (12.05), моя жизнь стала ярче.</p>
-                <p>Ты — самый прекрасный человек, которого я знаю. Твоя улыбка освещает мой день, а твой смех — моя любимая мелодия.</p>
-                <p>Спасибо, что ты есть у меня. Я люблю тебя больше всего на свете!</p>
-                <p>Твой парень.</p>
-            </div>
-            <button class="back-btn" onclick="closeWindow('letter')">Назад</button>
+            <div class="letter-text">Моя дорогая Настя,
+
+С того самого дня, 12.05, моя жизнь изменилась. Ты привнесла в нее столько красок и тепла.
+
+Я ценю каждый момент, проведенный с тобой. Твоя улыбка — это то, ради чего я просыпаюсь по утрам.
+
+Спасибо, что ты есть. Я тебя очень люблю!
+
+Твой программист ❤️</div>
+            <button class="back-btn" onclick="closeWindow('letter')">< НАЗАД</button>
         </div>
     </div>
 
     <div id="valentine" class="window">
         <div class="window-header">
-            <span>💘 WARNING: LOVE DETECTED</span>
-            <span onclick="closeWindow('valentine')" style="cursor:pointer">X</span>
+            <span>💘 КРИТИЧЕСКИЙ ВОПРОС</span>
+            <span onclick="closeWindow('valentine')" style="cursor:pointer; padding: 0 5px;">X</span>
         </div>
         <div class="window-content">
-            <h2 style="line-height: 1.5;">Настя, ты будешь моей Валентинкой?</h2>
-            <br>
+            <div style="background: #fff; padding: 20px; border: 3px inset var(--window-border);">
+                 <h2 style="line-height: 1.5; font-size: 14px;">Анастасия, ты будешь моей Валентинкой?</h2>
+                 <p style="font-size: 8px; margin-top: 10px;">(Другие варианты ответа не предусмотрены системой)</p>
+            </div>
+           
             <div id="response-area">
-                <button class="yes-btn" onclick="sayYes()">ДА! КОНЕЧНО!</button>
+                <button class="yes-btn" onclick="sayYes()">[ ДА, КОНЕЧНО! ]</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ЛОГИКА ВХОДА
+        // ЛОГИКА ВХОДА (Можно поменять пароль тут)
+        const CORRECT_LOGIN = 'Анастасия';
+        const CORRECT_PASS = '12.05';
+
         function checkLogin() {
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
             const errorMsg = document.getElementById('error-msg');
+            const loginWin = document.getElementById('login-screen');
 
-            // Проверка (с учетом регистра и формата)
-            if (user === 'Анастасия' && pass === '12.05') {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('main-menu').style.display = 'block';
+            if (user === CORRECT_LOGIN && pass === CORRECT_PASS) {
+                loginWin.style.animation = 'popOut 0.3s ease-in forwards';
+                setTimeout(() => {
+                    loginWin.style.display = 'none';
+                    document.getElementById('main-menu').style.display = 'block';
+                }, 300);
+                
             } else {
                 errorMsg.style.display = 'block';
-                // Тряска формы при ошибке
-                const loginBox = document.getElementById('login-screen');
-                loginBox.style.transform = 'translateX(10px)';
-                setTimeout(() => { loginBox.style.transform = 'translateX(0)'; }, 100);
+                // Эффект тряски при ошибке
+                loginWin.style.transform = 'translateX(10px)';
+                setTimeout(() => { loginWin.style.transform = 'translateX(-10px)'; }, 50);
+                setTimeout(() => { loginWin.style.transform = 'translateX(5px)'; }, 100);
+                setTimeout(() => { loginWin.style.transform = 'translateX(0)'; }, 150);
             }
         }
 
-        // ОТКРЫТИЕ ОКОН
         function openWindow(id) {
             document.getElementById('main-menu').style.display = 'none';
             document.getElementById(id).style.display = 'block';
         }
 
-        // ЗАКРЫТИЕ ОКОН
         function closeWindow(id) {
             document.getElementById(id).style.display = 'none';
             document.getElementById('main-menu').style.display = 'block';
         }
 
-        // ФИНАЛЬНАЯ КНОПКА
         function sayYes() {
             const area = document.getElementById('response-area');
-            area.innerHTML = "<h1>УРААА! ❤️❤️❤️ <br> Я ТЕБЯ ЛЮБЛЮ!</h1>";
+            area.innerHTML = "<h2 style='color: var(--accent); margin-top: 20px;'>УРА! ❤️ Я ТЕБЯ ЛЮБЛЮ!</h2><p>Система перегрелась от любви...</p>";
             
-            // Запуск конфетти (простая эмуляция символами)
-            setInterval(() => {
-                createHeart();
-            }, 300);
+            // Интенсивный запуск сердечек
+            for(let i=0; i<15; i++) { setTimeout(createHeart, i * 100); }
+            setInterval(createHeart, 400);
         }
 
         function createHeart() {
             const heart = document.createElement('div');
-            heart.innerText = '❤️';
+            heart.innerText = ['❤️', '💖', '💘', '💝'][Math.floor(Math.random()*4)];
             heart.style.position = 'fixed';
             heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.top = '-10px';
-            heart.style.fontSize = Math.random() * 20 + 20 + 'px';
-            heart.style.animation = 'fall 3s linear';
+            heart.style.top = '-50px';
+            heart.style.fontSize = Math.random() * 30 + 15 + 'px';
+            heart.style.zIndex = '999';
+            const duration = Math.random() * 3 + 2;
+            heart.style.animation = `fall ${duration}s linear forwards`;
             document.body.appendChild(heart);
             
-            setTimeout(() => {
-                heart.remove();
-            }, 3000);
+            setTimeout(() => { heart.remove(); }, duration * 1000);
         }
 
-        // Добавляем стиль анимации падения для сердечек через JS
         const styleSheet = document.createElement("style");
         styleSheet.innerText = `
             @keyframes fall {
-                to { transform: translateY(100vh) rotate(360deg); }
+                to { transform: translateY(110vh) rotate(720deg); }
+            }
+            @keyframes popOut {
+                 to { transform: scale(0); opacity: 0; }
+            }
+            @keyframes progress {
+                0% { width: 0%; } 100% { width: 100%; }
             }
         `;
         document.head.appendChild(styleSheet);
-
     </script>
 </body>
-</html>
+            </html>
