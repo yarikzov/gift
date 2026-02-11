@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Анастасии ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #2c0e37;
+            --window-bg: #e0cffc;
+            --text-color: #2c0e37;
+            --accent: #ff6b6b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #2c0e37, #682a66, #ff9a9e);
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        /* Общие стили для окон */
+        .window {
+            background: var(--window-bg);
+            border: 4px solid #fff;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 600px;
+            padding: 2px;
+            display: none; /* Скрыто по умолчанию */
+            position: absolute;
+            animation: popIn 0.3s ease-out;
+        }
+
+        .window-header {
+            background: linear-gradient(90deg, #ff9a9e, #ff6b6b);
+            padding: 10px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #fff;
+        }
+
+        .window-content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Экран логина */
+        #login-screen {
+            display: block; /* Показываем первым */
+            z-index: 100;
+        }
+
+        input {
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+            padding: 10px;
+            font-family: 'Press Start 2P', cursive;
+            border: 2px solid #2c0e37;
+            background: #fff0f5;
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-family: 'Press Start 2P', cursive;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px #2c0e37;
+            transition: transform 0.1s;
+            margin-top: 10px;
+        }
+
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #2c0e37;
+        }
+
+        /* Главное меню (папки) */
+        .folder-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .folder {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .folder:hover {
+            transform: scale(1.05);
+        }
+
+        .folder-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Стили для контента внутри папок */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .photo-frame {
+            background: white;
+            padding: 5px 5px 20px 5px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            transform: rotate(-2deg);
+        }
+        
+        .photo-frame:nth-child(even) {
+            transform: rotate(2deg);
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .letter-text {
+            text-align: left;
+            line-height: 1.8;
+            font-size: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            padding: 10px;
+            border: 2px inset #fff;
+        }
+
+        .back-btn {
+            background: #2c0e37;
+            font-size: 10px;
+            margin-top: 20px;
+        }
+
+        /* Анимация появления */
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 10px;
+            display: none;
+            margin-top: 10px;
+        }
+
+        /* Финальный экран */
+        .yes-btn {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" class="window">
+        <div class="window-header">
+            <span>🔒 Вход в сердце</span>
+            <span>X</span>
+        </div>
+        <div class="window-content">
+            <p>Добро пожаловать</p>
+            <br>
+            <input type="text" id="username" placeholder="Имя (Анастасия)">
+            <input type="password" id="password" placeholder="Пароль (дата)">
+            <button onclick="checkLogin()">Войти</button>
+            <p class="error-msg" id="error-msg">Неверное имя или дата!</p>
+        </div>
+    </div>
+
+    <div id="main-menu" class="window">
+        <div class="window-header">
+            <span>📂 Surprise_Files</span>
+            <span>X</span>
+        </div>
+        <div class="window-content">
+            <p>Выбери папку:</p>
+            <div class="folder-grid">
+                <div class="folder" onclick="openWindow('photos')">
+                    <span class="folder-icon">🖼️</span>
+                    <p>Наши фото</p>
+                </div>
+                <div class="folder" onclick="openWindow('music')">
+                    <span class="folder-icon">🎵</span>
+                    <p>Плейлист</p>
+                </div>
+                <div class="folder" onclick="openWindow('letter')">
+                    <span class="folder-icon">💌</span>
+                    <p>Письмо</p>
+                </div>
+                <div class="folder" onclick="openWindow('valentine')">
+                    <span class="folder-icon">💝</span>
+                    <p>Вопрос</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="photos" class="window">
+        <div class="window-header">
+            <span>📸 Memories.exe</span>
+            <span onclick="closeWindow('photos')" style="cursor:pointer">X</span>
+        </div>
+        <div class="window-content">
+            <div class="photo-grid">
+                <div class="photo-frame"><img src="https://via.placeholder.com/150/ff9a9e/ffffff?text=Love" alt="Foto"></div>
+                <div class="photo-frame"><img src="https://via.placeholder.com/150/ff6b6b/ffffff?text=You" alt="Foto"></div>
+                <div class="photo-frame"><img src="https://via.placeholder.com/150/e0cffc/000000?text=Us" alt="Foto"></div>
+                <div class="photo-frame"><img src="https://via.placeholder.com/150/682a66/ffffff?text=Date" alt="Foto"></div>
+            </div>
+            <button class="back-btn" onclick="closeWindow('photos')">Назад</button>
+        </div>
+    </div>
+
+    <div id="music" class="window">
+        <div class="window-header">
+            <span>🎵 Player</span>
+            <span onclick="closeWindow('music')" style="cursor:pointer">X</span>
+        </div>
+        <div class="window-content">
+            <div style="background: #000; color: #1db954; padding: 20px; border-radius: 10px; font-family: sans-serif;">
+                <h3>Наша песня</h3>
+                <p>Valentine's Mix</p>
+                <br>
+                <div style="height: 4px; background: grey; width: 100%; margin-bottom: 10px;"><div style="height:4px; width: 50%; background: #1db954;"></div></div>
+                <p>▶️ || ⏭️</p>
+            </div>
+            <p style="margin-top:10px; font-size: 10px;">(Представь, что здесь играет наша любимая музыка)</p>
+            <button class="back-btn" onclick="closeWindow('music')">Назад</button>
+        </div>
+    </div>
+
+    <div id="letter" class="window">
+        <div class="window-header">
+            <span>📝 love_letter.txt</span>
+            <span onclick="closeWindow('letter')" style="cursor:pointer">X</span>
+        </div>
+        <div class="window-content">
+            <div class="letter-text">
+                <p>Моя дорогая Настя,</p>
+                <p>С того дня, как мы начали встречаться (12.05), моя жизнь стала ярче.</p>
+                <p>Ты — самый прекрасный человек, которого я знаю. Твоя улыбка освещает мой день, а твой смех — моя любимая мелодия.</p>
+                <p>Спасибо, что ты есть у меня. Я люблю тебя больше всего на свете!</p>
+                <p>Твой парень.</p>
+            </div>
+            <button class="back-btn" onclick="closeWindow('letter')">Назад</button>
+        </div>
+    </div>
+
+    <div id="valentine" class="window">
+        <div class="window-header">
+            <span>💘 WARNING: LOVE DETECTED</span>
+            <span onclick="closeWindow('valentine')" style="cursor:pointer">X</span>
+        </div>
+        <div class="window-content">
+            <h2 style="line-height: 1.5;">Настя, ты будешь моей Валентинкой?</h2>
+            <br>
+            <div id="response-area">
+                <button class="yes-btn" onclick="sayYes()">ДА! КОНЕЧНО!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ЛОГИКА ВХОДА
+        function checkLogin() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+
+            // Проверка (с учетом регистра и формата)
+            if (user === 'Анастасия' && pass === '12.05') {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-menu').style.display = 'block';
+            } else {
+                errorMsg.style.display = 'block';
+                // Тряска формы при ошибке
+                const loginBox = document.getElementById('login-screen');
+                loginBox.style.transform = 'translateX(10px)';
+                setTimeout(() => { loginBox.style.transform = 'translateX(0)'; }, 100);
+            }
+        }
+
+        // ОТКРЫТИЕ ОКОН
+        function openWindow(id) {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById(id).style.display = 'block';
+        }
+
+        // ЗАКРЫТИЕ ОКОН
+        function closeWindow(id) {
+            document.getElementById(id).style.display = 'none';
+            document.getElementById('main-menu').style.display = 'block';
+        }
+
+        // ФИНАЛЬНАЯ КНОПКА
+        function sayYes() {
+            const area = document.getElementById('response-area');
+            area.innerHTML = "<h1>УРААА! ❤️❤️❤️ <br> Я ТЕБЯ ЛЮБЛЮ!</h1>";
+            
+            // Запуск конфетти (простая эмуляция символами)
+            setInterval(() => {
+                createHeart();
+            }, 300);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerText = '❤️';
+            heart.style.position = 'fixed';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '-10px';
+            heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+            heart.style.animation = 'fall 3s linear';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 3000);
+        }
+
+        // Добавляем стиль анимации падения для сердечек через JS
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes fall {
+                to { transform: translateY(100vh) rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+    </script>
+</body>
+</html>
